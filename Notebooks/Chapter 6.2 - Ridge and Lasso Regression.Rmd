@@ -1,7 +1,7 @@
 ---
 title: "Chapter 6.2 - Ridge and Lasso Regression"
 author : William Morgan
-output: html_notebook
+output: rmarkdown::github_document
 ---
 
 # 6.6 Lab 2: Ridge Regression and the Lasso

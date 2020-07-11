@@ -1,5 +1,6 @@
 ---
 title: 'Chapter 7 Lab: Moving Beyond Linearity'
+author : William Morgan
 output: rmarkdown::github_document
 ---
 

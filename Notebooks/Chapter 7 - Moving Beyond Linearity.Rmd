@@ -60,18 +60,18 @@ lm(wage ~ age + I(age^2) + I(age^3) + I(age^4), data = Wage) %>%
   coef()
 
 # Using cbind()
-lm(wage ~ cbind(age, age^2, age^3, age^4), data = Wage) %>%
-  coef()
+#lm(wage ~ cbind(age, age^2, age^3, age^4), data = Wage) %>%
+#  coef()
 ```
 
 Let's take a look at the fitted model to see how well it performs. We'll be using
 the `modelr` package to help us add a confidence interval around the fit. Since 
 there isn't any difference in outcome between the `poly(..., raw = TRUE)` and previous
-two mdoels we will just stick with `fit2` for the time being
+two models we will just stick with `fit2` for the time being
 
 ```{r model fit, echo = FALSE}
 Wage %>%
-  augment(fit2, .) %>%
+  augment(fit2, ., se_fit = TRUE) %>%
   mutate(fitted_low = .fitted - 2 * .se.fit,
          fitted_high = .fitted + 2 * .se.fit) %>%
   ggplot() +
@@ -144,7 +144,7 @@ through the first and second derivative.
 We will now take a look at the fitted curve in relation to the `Wage` data
 ```{r, echo = F}
 Wage %>%
-  augment(fit, .) %>%
+  augment(fit, ., se_fit = TRUE) %>%
   mutate(fitted_low = .fitted - 2 * .se.fit,
          fitted_high = .fitted + 2 * .se.fit) %>%
   ggplot() +
@@ -172,7 +172,7 @@ tidy(natural_spline)
 
 ```{r, echo = FALSE}
 Wage %>%
-  augment(natural_spline, .) %>%
+  augment(natural_spline, ., se_fit = TRUE) %>%
   mutate(fitted_low = .fitted - 2 * .se.fit,
          fitted_high = .fitted + 2 * .se.fit) %>%
   ggplot() +
@@ -252,8 +252,6 @@ g2 <- gam(wage ~ year + s(age, 5) + education, data = Wage) # Wage linear in `ye
 g3 <- gam(wage ~ s(year, 4) + s(age, 5) + education, data = Wage) # Natural spline for `year`
 
 anova(g1, g2, g3)
-
-
 ```
 
 
@@ -270,7 +268,7 @@ gam_lo <- gam(wage ~ s(year, df = 4) + lo(age, span = .7) + education,
               data = Wage)
 
 par(mfrow = c(1,3))
-plot.gam(gam_lo, se = TRUE, col = 'green')
+plot(gam_lo, se = TRUE, col = 'green')
 
 ```
 
@@ -292,5 +290,4 @@ gam_lr <- gam(I(wage>250) ~ year + s(age, df = 5) + education,
 
 par(mfrow = c(1,3))
 plot(gam_lr, se = TRUE, col = 'green')
-
 ```

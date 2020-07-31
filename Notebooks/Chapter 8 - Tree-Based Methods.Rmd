@@ -71,7 +71,7 @@ for the test error rate.
 
 ```{r}
 # Define our training/testing sets
-set.seed(2)
+set.seed(10)
 train <- sample_n(data, 200)
 test <-  setdiff(data, train)
 
@@ -82,7 +82,7 @@ ttree <- tree(high ~. -sales, data = train)
 test_predictions <- predict(ttree, test, type = 'class')
 table(test_predictions, test$high)
 
-(86 + 57) / 200
+(93+54) / 200
 
 ```
 
@@ -133,12 +133,43 @@ with `prune.misclass()` to obtain the optimal tree. Then, check to see if this
 tree performs any better on the testing set than the base tree $T_0$ did. 
 
 ```{r}
-pruned <- prune.misclass(ttree, best = 9)
+pruned <- prune.misclass(ttree, best = 5)
 
 test_predictions <- predict(pruned, data = test, type = 'class')
 table(test_predictions, test$high)
 
-(94 + 60) / 200
+(71+31) / 200
+```
+
+```{r}
+pruned <- prune.misclass(ttree, best = 2)
+
+test_predictions <- predict(pruned, data = test, type = 'class')
+table(test_predictions, test$high)
+
+(91+23) / 200
+```
+
+```{r}
+set.seed(1)
+train <- sample_frac(data, .5) 
+test <-  setdiff(data, train)
+
+# Set up the randomForest for the bagging case (all vars included)
+bag <- randomForest(high ~ . -sales, data = train,
+                    mtry = 13, importance = TRUE) 
+bag
+
+# Calculate MSE of the testing set for the bagged regression tree
+yhat <- predict(bag, test)
+
+table(yhat, test$high)
+
+(99+64) / 200
+```
+
+```{r}
+mean((yhat - test$sales)^2)
 ```
 
 ***
@@ -224,6 +255,8 @@ example, we will use `mtry=6` ($m \approx p/2$).
 ```{r}
 forest <- randomForest(medv ~., data = train, mtry = 6, importance = TRUE)
 
+forest
+
 yhat <- predict(forest, test)
 mean((yhat - test$medv)^2)
 ```
@@ -301,3 +334,25 @@ mean((yhat - test$medv)^2)
 
 Changing the shrinkage parameter actually made a difference - we're now just slightly
 under what we got from the previous model where it was equal to .001
+
+```{r}
+set.seed(1)
+train <- sample_frac(Boston, .5) 
+test <-  setdiff(Boston, train)
+
+train$interaction <- train$rm*train$lstat
+test$interaction <- test$rm*test$lstat
+
+boosted <- gbm(medv ~ ., train, distribution = 'gaussian', # regression => distr = 'gaussian'
+               n.trees = 5000, interaction.depth = 4)
+
+# Summarize and produce a quick plot to highlight importance of variables
+summary(boosted)
+```
+
+```{r}
+par(mfrow = c(1,2))
+plot(boosted, i = 'rm')
+plot(boosted, i = 'lstat')
+plot(boosted, i = 'interaction')
+```

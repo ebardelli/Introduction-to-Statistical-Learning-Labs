@@ -110,6 +110,6 @@ plot(hclust(dist(xsc), method = "complete"), main = "Hierarchical Clustering wit
 #Practice clustering usinga correlation-based distance measure
 x <- matrix(rnorm(30*3), ncol = 3)
 dd <- as.dist(1-cor(t(x)))
-plot(hclust(dd, method = "complete"), main = "Complete Linkage with Correlation-Based Distance"))
+plot(hclust(dd, method = "complete"), main = "Complete Linkage with Correlation-Based Distance")
 
 ###### End of Section 3 #####

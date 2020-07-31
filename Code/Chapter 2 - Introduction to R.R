@@ -117,7 +117,7 @@ A[-c(1,3),]
 dim(A)
 
 #We begin by loading the Auto dataset taken from the ISLR website; it is saved in csv format so we must use read.csv()
-auto <- read.csv("Data\Auto.csv")
+auto <- read.csv("Data/Auto.csv")
 fix(auto) #quick visual inspection
 dim(auto) #get an idea of how large this dataset is
 names(auto) #check out the names of the variables in this data

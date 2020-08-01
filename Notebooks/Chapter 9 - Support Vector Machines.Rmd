@@ -47,7 +47,7 @@ dat <- tibble(
 dat$x1[dat$y == "A"] <-  dat$x1[dat$y == "A"] + 5
 
 # Check to see if classes are linearly separable
-ggplot(dat, aes(x1, x2, col = y)) + 
+ggplot(dat, aes(x2, x1, col = y)) + 
   geom_jitter()
 
 ```
@@ -81,6 +81,9 @@ svc2 <- svm(y ~ ., data = dat, kernel = 'linear',
             cost = 1, scale = FALSE)
 
 summary(svc2)
+
+plot(svc2, dat)
+
 ```
 
 
@@ -189,6 +192,9 @@ table(prediction = predict(rad_cv$best.model),
       actual = train$y)
 
 ```
+```{r}
+plot(rad_cv$best.model, train)
+```
 
 We'll just quickly run the same analysis with a polynomial kernel so we can compare
 the results
@@ -201,6 +207,15 @@ poly_cv <-  tune(svm, y ~ ., data = train, kernel = 'polynomial',
 
 table(prediction = predict(poly_cv$best.model),
       actual = train$y)
+```
+
+
+```{r}
+summary(poly_cv)
+```
+
+```{r}
+plot(poly_cv$best.model, train)
 ```
 
 ***
